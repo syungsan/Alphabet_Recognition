@@ -1,0 +1,12 @@
+認識フォルダ,モデル,誤認識数,認識率
+data/test/margin_2,CNN_model_alphabet_X,44,97.0%
+data/test/margin_2,CNN_model_epoch010,40,97.3%
+data/test/margin_2,CNN_model_epoch020,37,97.5%
+data/test/margin_2,CNN_model_epoch030,33,97.8%
+data/test/margin_2,CNN_model_epoch040,38,97.5%
+data/test/margin_2,CNN_model_epoch050,33,97.8%
+data/test/margin_2,CNN_model_epoch060,41,97.3%
+data/test/margin_2,CNN_model_epoch070,36,97.6%
+data/test/margin_2,CNN_model_epoch080,42,97.2%
+data/test/margin_2,CNN_model_epoch090,40,97.3%
+data/test/margin_2,CNN_model_epoch100,35,97.7%
