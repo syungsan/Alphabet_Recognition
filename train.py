@@ -13,9 +13,15 @@ from keras.layers.convolutional import Conv2D, MaxPooling2D
 from keras.utils import np_utils
 from keras.callbacks import CSVLogger, ModelCheckpoint, EarlyStopping
 from sklearn.model_selection import train_test_split
+from imblearn.over_sampling import SMOTE
 
 # from keras import backend as k
 # k.set_image_dim_ordering('tf')
+
+import deep_cnn
+
+# model_type = ["deep": "deep_cnn", "standard": "standard_model"]
+MODEL_TYPE = "deep"
 
 
 # 学習
@@ -85,34 +91,48 @@ def train(model_name, epochs, batch_size, length, margin, angles):
     x = np.array(x)
     y = np.array(y)
 
+    x = x.reshape(x.shape[0], length * length)
+
+    print("\nOver sampling by SMOTE.\n")
+    smote = SMOTE(random_state=42)
+    x, y = smote.fit_resample(x, y)
+
+    for i in range(26):
+        print("Data number resampled => " + chr(i + 97) + ": " + str(np.sum(y == i)))
+
     data_num = x.shape[0]
     x = x.reshape((data_num, length, length, 1)).astype(np.float32) / 255
     y = np_utils.to_categorical(y, 26)
 
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.20)
 
-    # モデル構造
-    model = Sequential()
+    if MODEL_TYPE == "standard":
 
-    model.add(Conv2D(32, (5, 5), input_shape=(28, 28, 1), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.5))
+        # モデル構造
+        model = Sequential()
 
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.2))
+        model.add(Conv2D(32, (5, 5), input_shape=(28, 28, 1), activation='relu'))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(Dropout(0.5))
 
-    model.add(Conv2D(128, (1, 1), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.2))
+        model.add(Conv2D(64, (3, 3), activation='relu'))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(Dropout(0.2))
 
-    model.add(Flatten())
-    model.add(Dense(128, activation='relu'))
-    model.add(Dense(26, activation='softmax'))
+        model.add(Conv2D(128, (1, 1), activation='relu'))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(Dropout(0.2))
 
-    model.summary()
+        model.add(Flatten())
+        model.add(Dense(128, activation='relu'))
+        model.add(Dense(26, activation='softmax'))
 
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+        model.summary()
+
+        model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+    if MODEL_TYPE == "deep":
+        model = deep_cnn.create_model(length, 26, 0.0001)
 
     # 学習結果を保存
     save_folder = './model/{}/'.format(model_name)
@@ -139,4 +159,4 @@ def train(model_name, epochs, batch_size, length, margin, angles):
 
 
 if __name__ == '__main__':
-    train(model_name='test', epochs=100, batch_size=256, length=28, margin=2, angles=[0, 10, 20, 350, 340])
+    train(model_name='temp', epochs=100, batch_size=256, length=28, margin=2, angles=[0, 10, 20, 350, 340])
