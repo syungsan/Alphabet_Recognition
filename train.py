@@ -1,97 +1,28 @@
 from functions import *
 
 import os
-import glob
-# import random
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
 
 import keras
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
-from keras.layers.convolutional import Conv2D, MaxPooling2D
 from keras.utils import np_utils
-from keras.callbacks import CSVLogger, ModelCheckpoint, EarlyStopping
+from keras.callbacks import CSVLogger, ModelCheckpoint # , EarlyStopping
 from sklearn.model_selection import train_test_split
-from imblearn.over_sampling import SMOTE
+from imblearn.over_sampling import SMOTE # pip install imbalanced-learn
 
 # from keras import backend as k
 # k.set_image_dim_ordering('tf')
 
-import deep_cnn
+import cnn
 
 # model_type = ["deep": "deep_cnn", "standard": "standard_model"]
 MODEL_TYPE = "deep"
 
 
 # 学習
-def train(model_name, epochs, batch_size, length, margin, angles):
-    x, y = [], []
+def train(model_name, epochs, batch_size, length):
 
-    # EMNISTからランダムに読み込み
-    for label, folder in enumerate(glob.glob('./data/train/emnist/train_*/')):
-        files = os.listdir(folder)
-        # selects = random.sample(files, 1920)
-        for file in files: # selects:
-            img = cv2.imread(folder + file)
-
-            for angle in angles:
-                rot = angle_changer(img=img, angle=angle)
-
-                cut = rectangle_cutout(img=rot)
-                data = training_resize(img=cut, length=length, margin=margin)
-
-                x.append(data)
-                y.append(label)
-
-        print('EMNIST reading_character', chr(label + 97), len(files))
-
-    # TheChars74Kから読み込み
-    for label, folder in enumerate(glob.glob('./data/train/chars74k/Sample0*/')):
-        files = os.listdir(folder)
-        for file in files:
-            img = cv2.imread(folder + file)
-            shrink = cv2.resize(img, None, fx=0.2, fy=0.2)
-
-            for angle in angles:
-                rot = angle_changer(img=shrink, angle=angle)
-
-                cut = rectangle_cutout(img=rot)
-                data = training_resize(img=cut, length=length, margin=margin)
-
-                x.append(data)
-                y.append(label)
-
-        print('TheChars74K reading_character', chr(label + 97))
-
-    # TTFファイルから画像生成
-    for label in range(26):
-        alphabet = chr(label + 97)
-        for ttf in glob.glob('./data/train/ttf/*__*.ttf'):
-            font = ImageFont.truetype(ttf, 100)
-            width, height = font.getsize(alphabet)
-
-            back = Image.new('RGB', (width * 2, height * 2), (255, 255, 255))
-            draw = ImageDraw.Draw(back)
-            draw.text((width / 2, height / 2), alphabet, (0, 0, 0), font)
-
-            img = np.asarray(back)
-
-            for angle in angles:
-                rot = angle_changer(img=img, angle=angle)
-
-                cut = rectangle_cutout(img=rot)
-                data = training_resize(img=cut, length=length, margin=margin)
-
-                x.append(data)
-                y.append(label)
-
-        print('TTF reading_character', alphabet)
-
-    x = np.array(x)
-    y = np.array(y)
-
-    x = x.reshape(x.shape[0], length * length)
+    print("Reading features from CSV...")
+    x, y = load_data(file_path="./data/train.csv")
 
     print("\nOver sampling by SMOTE.\n")
     smote = SMOTE(random_state=42)
@@ -107,32 +38,10 @@ def train(model_name, epochs, batch_size, length, margin, angles):
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.20)
 
     if MODEL_TYPE == "standard":
-
-        # モデル構造
-        model = Sequential()
-
-        model.add(Conv2D(32, (5, 5), input_shape=(28, 28, 1), activation='relu'))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Dropout(0.5))
-
-        model.add(Conv2D(64, (3, 3), activation='relu'))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Dropout(0.2))
-
-        model.add(Conv2D(128, (1, 1), activation='relu'))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Dropout(0.2))
-
-        model.add(Flatten())
-        model.add(Dense(128, activation='relu'))
-        model.add(Dense(26, activation='softmax'))
-
-        model.summary()
-
-        model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+        model = cnn.create_standard_model(length=length, y_len=26)
 
     if MODEL_TYPE == "deep":
-        model = deep_cnn.create_model(length, 26, 0.0001)
+        model = cnn.create_deep_model(length=length, y_len=26, learn_rate=0.0001)
 
     # 学習結果を保存
     save_folder = './model/{}/'.format(model_name)
@@ -159,4 +68,4 @@ def train(model_name, epochs, batch_size, length, margin, angles):
 
 
 if __name__ == '__main__':
-    train(model_name='temp', epochs=100, batch_size=256, length=28, margin=2, angles=[0, 10, 20, 350, 340])
+    train(model_name='temp', epochs=100, batch_size=256, length=28)

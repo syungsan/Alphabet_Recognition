@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from PIL import Image
 from matplotlib import pyplot as plt
+import csv
 
 
 # 回転拡張
@@ -82,3 +83,67 @@ def plot_result(log_path, history):
     plt.ylabel('loss')
     plt.savefig('{}/graph_loss.png'.format(log_path))
     plt.show()
+
+
+def write_csv(file_path, list):
+
+    try:
+        # 書き込み UTF-8
+        with open(file_path, "w", encoding="utf-8") as csvfile:
+            writer = csv.writer(csvfile, lineterminator='\n')
+            writer.writerows(list)
+
+    # 起こりそうな例外をキャッチ
+    except FileNotFoundError as e:
+        print(e)
+    except csv.Error as e:
+        print(e)
+
+
+def flatten_with_any_depth(nested_list):
+
+    """深さ優先探索の要領で入れ子のリストをフラットにする関数"""
+    # フラットなリストとフリンジを用意
+    flat_list = []
+    fringe = [nested_list]
+
+    while len(fringe) > 0:
+        node = fringe.pop(0)
+        # ノードがリストであれば子要素をフリンジに追加
+        # リストでなければそのままフラットリストに追加
+        if isinstance(node, list):
+            fringe = node + fringe
+        else:
+            flat_list.append(node)
+
+    return flat_list
+
+
+def load_data(file_path):
+    # load your data using this function
+
+    # CSVの制限を外す
+    # csv.field_size_limit(sys.maxsize)
+
+    data = []
+    target = []
+
+    with open(file_path, "r") as f:
+        reader = csv.reader(f, delimiter=",")
+
+        for columns in reader:
+            target.append(columns[0])
+
+            # こいつが決め手か？！
+            data.append(columns[1:])
+
+    data = np.array(data, dtype=np.float32)
+
+    # なぜか進数のエラーを返すので処理
+    target10b = []
+    for tar in target:
+        target10b.append(int(float(tar)))
+
+    target = np.array(target10b, dtype=np.int32)
+
+    return data, target
