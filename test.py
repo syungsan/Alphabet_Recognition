@@ -126,9 +126,9 @@ def character_recognition(recognition_folder, model_folder, error_index):
 
 
 if __name__ == '__main__':
-    # # 卒論
-    # thesis_list = [52, 319, 321, 757, 799, 804, 813, 818, 827, 832, 1388, 1430, 1436, 1461, 1462, 1466, 1472]
-    # character_recognition(recognition_folder='_results', model_folder='181112', error_index=thesis_list)
+    # 卒論
+    thesis_list = [52, 319, 321, 757, 799, 804, 813, 818, 827, 832, 1388, 1430, 1436, 1461, 1462, 1466, 1472]
+    character_recognition(recognition_folder='_results2', model_folder='181112', error_index=thesis_list)
 
     # 切り出し調整後
     # add_list = [52, 319, 321, 757, 799, 804, 813, 818, 827, 832, 1213, 1388, 1430, 1436, 1461, 1462, 1466, 1472]
