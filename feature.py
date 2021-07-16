@@ -6,8 +6,8 @@ import random
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-# ["large", "small"]
-DATA_SCALE = "small"
+# data_scale = ["large" or "small"]
+DATA_SCALE = "large"
 
 
 def get_feature(angles, length, margin):
@@ -88,7 +88,7 @@ def get_feature(angles, length, margin):
         features.append(feature)
 
     print("\nWriting features to CSV...")
-    write_csv("./data/train.csv", features)
+    write_csv("./data/train_{}.csv".format(DATA_SCALE), features)
 
 
 if __name__ == '__main__':

@@ -6,7 +6,7 @@ from keras.layers.normalization import BatchNormalization
 from keras.layers.convolutional import Conv2D, MaxPooling2D
 
 
-def create_standard_model(length, y_len):
+def create_shallow_model(length, y_len):
 
     # モデル構造
     model = Sequential()

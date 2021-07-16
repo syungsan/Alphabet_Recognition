@@ -61,5 +61,5 @@ def get_matching_point_number(query_img_path, map_img_path, is_show_fig=False):
 
 if __name__ == "__main__":
 
-    matching_point_num = get_matching_point_number('./data/test_imgs/v1.png', './data/test_imgs/v2.png', is_show_fig=True)
+    matching_point_num = get_matching_point_number('./data/patterns/v1.png', './data/patterns/v2.png', is_show_fig=True)
     print(matching_point_num)

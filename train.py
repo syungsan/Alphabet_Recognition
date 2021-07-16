@@ -14,15 +14,18 @@ from imblearn.over_sampling import SMOTE # pip install imbalanced-learn
 
 import cnn
 
-# model_type = ["deep": "deep_cnn", "standard": "standard_model"]
+# model_type = ["deep" or "shallow"]
 MODEL_TYPE = "deep"
+
+# data_scale = ["small" or "large"]
+DATA_SCALE = "large"
 
 
 # 学習
 def train(model_name, epochs, batch_size, length):
 
-    print("Reading features from CSV...")
-    x, y = load_data(file_path="./data/train.csv")
+    print("Reading {} features from CSV...".format(DATA_SCALE))
+    x, y = load_data(file_path="./data/train_{}.csv".format(DATA_SCALE))
 
     print("\nOver sampling by SMOTE.\n")
     smote = SMOTE(random_state=42)
@@ -37,8 +40,8 @@ def train(model_name, epochs, batch_size, length):
 
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.20)
 
-    if MODEL_TYPE == "standard":
-        model = cnn.create_standard_model(length=length, y_len=26)
+    if MODEL_TYPE == "shallow":
+        model = cnn.create_shallow_model(length=length, y_len=26)
 
     if MODEL_TYPE == "deep":
         model = cnn.create_deep_model(length=length, y_len=26, learn_rate=0.0001)
@@ -68,4 +71,4 @@ def train(model_name, epochs, batch_size, length):
 
 
 if __name__ == '__main__':
-    train(model_name='temp', epochs=100, batch_size=256, length=28)
+    train(model_name="data-{}_model-{}".format(DATA_SCALE, MODEL_TYPE), epochs=100, batch_size=256, length=28)
