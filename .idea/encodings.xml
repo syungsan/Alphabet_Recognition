@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/evaluation/検証結果__results2_181112/CNN_model_181112/誤認識率.csv" charset="windows-31j" />
+    <file url="file://$PROJECT_DIR$/evaluation/検証結果__results2_181112/CNN_model_181112/誤認識集計.csv" charset="windows-31j" />
+    <file url="file://$PROJECT_DIR$/evaluation/検証結果__results2_181112/誤認識まとめ.csv" charset="windows-31j" />
+    <file url="file://$PROJECT_DIR$/evaluation/検証結果__results_181112/誤認識まとめ.csv" charset="windows-31j" />
+    <file url="file://$PROJECT_DIR$/evaluation/検証結果_margin_2_alphabet_X/誤認識まとめ.csv" charset="windows-31j" />
+    <file url="file://$PROJECT_DIR$/evaluation/検証結果_margin_2_data-large_model-deep/誤認識まとめ.csv" charset="windows-31j" />
+    <file url="file://$PROJECT_DIR$/evaluation/検証結果_margin_2_data-small_model-shallow/誤認識まとめ.csv" charset="windows-31j" />
+    <file url="file://$PROJECT_DIR$/evaluation/検証結果_results_181112/CNN_model_181112/誤認識集計.csv" charset="windows-31j" />
+    <file url="file://$PROJECT_DIR$/evaluation/検証結果_results_181112/誤認識まとめ.csv" charset="windows-31j" />
     <file url="file://$PROJECT_DIR$/evaluation/検証結果_results_190207/CNN_model_190207/誤認識率.csv" charset="windows-31j" />
     <file url="file://$PROJECT_DIR$/evaluation/検証結果_results_190207/CNN_model_190207/誤認識集計.csv" charset="windows-31j" />
+    <file url="file://$PROJECT_DIR$/evaluation/検証結果_results_190207/誤認識まとめ.csv" charset="windows-31j" />
+    <file url="file://$PROJECT_DIR$/evaluation/検証結果_results_data-large_model-deep/誤認識まとめ.csv" charset="windows-31j" />
+    <file url="file://$PROJECT_DIR$/evaluation/検証結果_results_data-large_model-shallow/誤認識まとめ.csv" charset="windows-31j" />
+    <file url="file://$PROJECT_DIR$/evaluation/検証結果_results_data-small_model-deep/誤認識まとめ.csv" charset="windows-31j" />
+    <file url="file://$PROJECT_DIR$/evaluation/検証結果_results_data-small_model-shallow/CNN_model_data-small_model-shallow/誤認識集計.csv" charset="windows-31j" />
+    <file url="file://$PROJECT_DIR$/evaluation/検証結果_results_data-small_model-shallow/CNN_model_epoch_001/誤認識集計.csv" charset="windows-31j" />
+    <file url="file://$PROJECT_DIR$/evaluation/検証結果_results_data-small_model-shallow/誤認識まとめ.csv" charset="windows-31j" />
   </component>
 </project>

@@ -1,0 +1,11 @@
+認識フォルダ,モデル,誤認識数,認識率
+results,CNN_model_data-small_model-deep,90,94.0%
+results,CNN_model_epoch_010,81,94.6%
+results,CNN_model_epoch_020,94,93.7%
+results,CNN_model_epoch_030,84,94.4%
+results,CNN_model_epoch_040,77,94.8%
+results,CNN_model_epoch_050,60,96.0%
+results,CNN_model_epoch_060,93,93.8%
+results,CNN_model_epoch_070,69,95.4%
+results,CNN_model_epoch_080,61,95.9%
+results,CNN_model_epoch_090,75,95.0%

@@ -4,6 +4,10 @@ import glob
 import numpy as np
 from PIL import Image
 from keras.models import load_model
+import fnmatch
+
+
+THINNING_OUT_NUMBER = 10
 
 
 # 文字認識検証,ユーザごとにフォルダ分けをしておく
@@ -43,7 +47,17 @@ def character_recognition(recognition_folder, model_folder, error_index):
     all_writer = csv.writer(all_log)
     all_writer.writerow(['認識フォルダ', 'モデル', '誤認識数', '認識率'])
 
-    for model_path in glob.glob('./model/{}/*.h5'.format(model_folder)):
+    # for model_path in glob.glob('./model/{}/*.h5'.format(model_folder)):
+    final_model_paths = glob.glob('./model/{}/*_{}.h5'.format(model_folder, model_folder))
+    pre_process_model_paths = glob.glob('./model/{}/*_epoch_*.h5'.format(model_folder))
+
+    model_paths = []
+    model_paths.extend(final_model_paths)
+
+    for index in range(THINNING_OUT_NUMBER, int(len(pre_process_model_paths)), THINNING_OUT_NUMBER):
+        model_paths.extend(fnmatch.filter(pre_process_model_paths, "*_{}.h5".format("{0:03d}".format(index))))
+
+    for model_path in model_paths:
         model = load_model(model_path)
 
         model_name, _ = os.path.splitext(os.path.basename(model_path))
@@ -126,14 +140,28 @@ def character_recognition(recognition_folder, model_folder, error_index):
 
 
 if __name__ == '__main__':
-    # 卒論
+
+    # # 卒論
+    # thesis_list = [52, 319, 321, 757, 799, 804, 813, 818, 827, 832, 1388, 1430, 1436, 1461, 1462, 1466, 1472]
+    # character_recognition(recognition_folder='results', model_folder='181112', error_index=thesis_list)
+
+    # 新規試行
     thesis_list = [52, 319, 321, 757, 799, 804, 813, 818, 827, 832, 1388, 1430, 1436, 1461, 1462, 1466, 1472]
-    character_recognition(recognition_folder='_results2', model_folder='data-small_model_shallow', error_index=thesis_list)
+    character_recognition(recognition_folder='results', model_folder='data-small_model-shallow', error_index=thesis_list)
+    character_recognition(recognition_folder='results', model_folder='data-large_model-shallow', error_index=thesis_list)
+    character_recognition(recognition_folder='results', model_folder='data-small_model-deep', error_index=thesis_list)
+    character_recognition(recognition_folder='results', model_folder='data-large_model-deep', error_index=thesis_list)
 
     # 切り出し調整後
     # add_list = [52, 319, 321, 757, 799, 804, 813, 818, 827, 832, 1213, 1388, 1430, 1436, 1461, 1462, 1466, 1472]
     # character_recognition(recognition_folder='data/test/margin_2', model_folder='alphabet_X', error_index=add_list)
 
-    for a in glob.glob('_results/*-*/.*'):
+    add_list = [52, 319, 321, 757, 799, 804, 813, 818, 827, 832, 1213, 1388, 1430, 1436, 1461, 1462, 1466, 1472]
+    character_recognition(recognition_folder='data/test/margin_2', model_folder='data-small_model-shallow', error_index=add_list)
+    character_recognition(recognition_folder='data/test/margin_2', model_folder='data-large_model-shallow', error_index=add_list)
+    character_recognition(recognition_folder='data/test/margin_2', model_folder='data-small_model-deep', error_index=add_list)
+    character_recognition(recognition_folder='data/test/margin_2', model_folder='data-large_model-deep', error_index=add_list)
+
+    for a in glob.glob('results/*-*/.*'):
         os.remove(a)
         print(a)
