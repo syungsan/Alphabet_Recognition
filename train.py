@@ -15,24 +15,35 @@ from imblearn.over_sampling import SMOTE # pip install imbalanced-learn
 import cnn
 
 # model_type = ["deep" or "shallow"]
-MODEL_TYPE = "deep"
+MODEL_TYPE = "shallow"
 
-# data_scale = ["small" or "large"]
-DATA_SCALE = "large"
+# data_scale = ["large" or "small"]
+EMNIST_DATA_SCALE = "small"
+
+# which addition TheChars74K and TTF?
+IS_EXPANSIONED = False
 
 
 # 学習
 def train(model_name, epochs, batch_size, length):
 
-    print("Reading {} features from CSV...".format(DATA_SCALE))
-    x, y = load_data(file_path="./data/train_{}.csv".format(DATA_SCALE))
+    if IS_EXPANSIONED == True:
+        expansion = "expansioned"
+    else:
+        expansion = "non-expansioned"
 
-    print("\nOver sampling by SMOTE.\n")
-    smote = SMOTE(random_state=42)
-    x, y = smote.fit_resample(x, y)
+    print("Reading {}-emnist & {} features from CSV...".format(EMNIST_DATA_SCALE, expansion))
+    x, y = load_data(file_path="./data/train_{}-emnist_{}.csv".format(EMNIST_DATA_SCALE, expansion))
 
-    for i in range(26):
-        print("Data number resampled => " + chr(i + 97) + ": " + str(np.sum(y == i)))
+    if EMNIST_DATA_SCALE == "large":
+
+        print("\nOver sampling by SMOTE.\n")
+
+        smote = SMOTE(random_state=42)
+        x, y = smote.fit_resample(x, y)
+
+        for i in range(26):
+            print("Data number resampled => " + chr(i + 97) + ": " + str(np.sum(y == i)))
 
     data_num = x.shape[0]
     x = x.reshape((data_num, length, length, 1)).astype(np.float32) / 255
@@ -45,6 +56,8 @@ def train(model_name, epochs, batch_size, length):
 
     if MODEL_TYPE == "deep":
         model = cnn.create_deep_model(length=length, y_len=26, learn_rate=0.0001)
+
+    print("Created {} model".format(MODEL_TYPE))
 
     # 学習結果を保存
     save_folder = './model/{}/'.format(model_name)
@@ -71,4 +84,10 @@ def train(model_name, epochs, batch_size, length):
 
 
 if __name__ == '__main__':
-    train(model_name="data-{}_model-{}".format(DATA_SCALE, MODEL_TYPE), epochs=100, batch_size=256, length=28)
+
+    if IS_EXPANSIONED == True:
+        expansion = "expansioned"
+    else:
+        expansion = "non-expansioned"
+
+    train(model_name="data-{}-emnist_{}_type-{}".format(EMNIST_DATA_SCALE, expansion, MODEL_TYPE), epochs=100, batch_size=256, length=28)

@@ -7,7 +7,10 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 # data_scale = ["large" or "small"]
-DATA_SCALE = "large"
+EMNIST_DATA_SCALE = "small"
+
+# which addition TheChars74K and TTF?
+IS_EXPANSIONED = False
 
 
 def get_feature(angles, length, margin):
@@ -18,11 +21,13 @@ def get_feature(angles, length, margin):
     for label, folder in enumerate(glob.glob('./data/train/emnist/train_*/')):
         files = os.listdir(folder)
 
-        if DATA_SCALE == "large":
-            selects = random.sample(files, len(files))
+        if EMNIST_DATA_SCALE == "large":
+            files_len = len(files)
 
-        if DATA_SCALE == "small":
-            selects = random.sample(files, 1920)
+        if EMNIST_DATA_SCALE == "small":
+            files_len = 1920
+
+        selects = random.sample(files, files_len)
 
         for file in selects:
             img = cv2.imread(folder + file)
@@ -36,49 +41,51 @@ def get_feature(angles, length, margin):
                 x.append(data)
                 y.append(label)
 
-        print('EMNIST reading_character', chr(label + 97), len(files))
+        print('EMNIST reading_character', chr(label + 97), files_len)
 
-    # TheChars74Kから読み込み
-    for label, folder in enumerate(glob.glob('./data/train/chars74k/Sample0*/')):
-        files = os.listdir(folder)
-        for file in files:
-            img = cv2.imread(folder + file)
-            shrink = cv2.resize(img, None, fx=0.2, fy=0.2)
+    if IS_EXPANSIONED == True:
 
-            for angle in angles:
-                rot = angle_changer(img=shrink, angle=angle)
+        # TheChars74Kから読み込み
+        for label, folder in enumerate(glob.glob('./data/train/chars74k/Sample0*/')):
+            files = os.listdir(folder)
+            for file in files:
+                img = cv2.imread(folder + file)
+                shrink = cv2.resize(img, None, fx=0.2, fy=0.2)
 
-                cut = rectangle_cutout(img=rot)
-                data = training_resize(img=cut, length=length, margin=margin)
+                for angle in angles:
+                    rot = angle_changer(img=shrink, angle=angle)
 
-                x.append(data)
-                y.append(label)
+                    cut = rectangle_cutout(img=rot)
+                    data = training_resize(img=cut, length=length, margin=margin)
 
-        print('TheChars74K reading_character', chr(label + 97))
+                    x.append(data)
+                    y.append(label)
 
-    # TTFファイルから画像生成
-    for label in range(26):
-        alphabet = chr(label + 97)
-        for ttf in glob.glob('./data/train/ttf/*__*.ttf'):
-            font = ImageFont.truetype(ttf, 100)
-            width, height = font.getsize(alphabet)
+            print('TheChars74K reading_character', chr(label + 97))
 
-            back = Image.new('RGB', (width * 2, height * 2), (255, 255, 255))
-            draw = ImageDraw.Draw(back)
-            draw.text((width / 2, height / 2), alphabet, (0, 0, 0), font)
+        # TTFファイルから画像生成
+        for label in range(26):
+            alphabet = chr(label + 97)
+            for ttf in glob.glob('./data/train/ttf/*__*.ttf'):
+                font = ImageFont.truetype(ttf, 100)
+                width, height = font.getsize(alphabet)
 
-            img = np.asarray(back)
+                back = Image.new('RGB', (width * 2, height * 2), (255, 255, 255))
+                draw = ImageDraw.Draw(back)
+                draw.text((width / 2, height / 2), alphabet, (0, 0, 0), font)
 
-            for angle in angles:
-                rot = angle_changer(img=img, angle=angle)
+                img = np.asarray(back)
 
-                cut = rectangle_cutout(img=rot)
-                data = training_resize(img=cut, length=length, margin=margin)
+                for angle in angles:
+                    rot = angle_changer(img=img, angle=angle)
 
-                x.append(data)
-                y.append(label)
+                    cut = rectangle_cutout(img=rot)
+                    data = training_resize(img=cut, length=length, margin=margin)
 
-        print('TTF reading_character', alphabet)
+                    x.append(data)
+                    y.append(label)
+
+            print('TTF reading_character', alphabet)
 
     features = []
 
@@ -88,7 +95,13 @@ def get_feature(angles, length, margin):
         features.append(feature)
 
     print("\nWriting features to CSV...")
-    write_csv("./data/train_{}.csv".format(DATA_SCALE), features)
+
+    if IS_EXPANSIONED == True:
+        expansion = "expansioned"
+    else:
+        expansion = "non-expansioned"
+
+    write_csv("./data/train_{}-emnist_{}.csv".format(EMNIST_DATA_SCALE, expansion), features)
 
 
 if __name__ == '__main__':

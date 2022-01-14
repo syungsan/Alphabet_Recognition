@@ -6,7 +6,6 @@ from PIL import Image
 from keras.models import load_model
 import fnmatch
 
-
 THINNING_OUT_NUMBER = 10
 
 
@@ -147,20 +146,14 @@ if __name__ == '__main__':
 
     # 新規試行
     thesis_list = [52, 319, 321, 757, 799, 804, 813, 818, 827, 832, 1388, 1430, 1436, 1461, 1462, 1466, 1472]
-    character_recognition(recognition_folder='results', model_folder='data-small_model-shallow', error_index=thesis_list)
-    character_recognition(recognition_folder='results', model_folder='data-large_model-shallow', error_index=thesis_list)
-    character_recognition(recognition_folder='results', model_folder='data-small_model-deep', error_index=thesis_list)
-    character_recognition(recognition_folder='results', model_folder='data-large_model-deep', error_index=thesis_list)
+    character_recognition(recognition_folder='results', model_folder='data-small-emnist_non-expansioned_type-shallow', error_index=thesis_list)
 
     # 切り出し調整後
     # add_list = [52, 319, 321, 757, 799, 804, 813, 818, 827, 832, 1213, 1388, 1430, 1436, 1461, 1462, 1466, 1472]
     # character_recognition(recognition_folder='data/test/margin_2', model_folder='alphabet_X', error_index=add_list)
 
     add_list = [52, 319, 321, 757, 799, 804, 813, 818, 827, 832, 1213, 1388, 1430, 1436, 1461, 1462, 1466, 1472]
-    character_recognition(recognition_folder='data/test/margin_2', model_folder='data-small_model-shallow', error_index=add_list)
-    character_recognition(recognition_folder='data/test/margin_2', model_folder='data-large_model-shallow', error_index=add_list)
-    character_recognition(recognition_folder='data/test/margin_2', model_folder='data-small_model-deep', error_index=add_list)
-    character_recognition(recognition_folder='data/test/margin_2', model_folder='data-large_model-deep', error_index=add_list)
+    character_recognition(recognition_folder='data/test/margin_2', model_folder='data-small-emnist_non-expansioned_type-shallow', error_index=add_list)
 
     for a in glob.glob('results/*-*/.*'):
         os.remove(a)
